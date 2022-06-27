@@ -74,6 +74,11 @@ void DistributedPipelineHandle::start(uint64_t iteration) {
         while(retry) {
 
             if(!first_attempt) {
+                spdlog::trace("Destroying previous group id");
+                int ret = ssg_group_destroy(self->m_gid);
+                if(ret != 0) {
+                    spdlog::error("Could not destroy previous group id (error code is {})", ret);
+                }
                 spdlog::trace("Updating view of SSG group");
                 auto new_dist_pipeline = Client(self->m_client).makeDistributedPipelineHandle(
                         self->m_comm, self->m_ssg_group_file, self->m_provider_id,
@@ -145,6 +150,11 @@ void DistributedPipelineHandle::start(uint64_t iteration) {
 
         self->m_comm->bcast(&ok, sizeof(ok), 0);
         while(not ok) {
+            spdlog::trace("Destroying previous group id");
+            int ret = ssg_group_destroy(self->m_gid);
+            if(ret != 0) {
+                spdlog::error("Could not destroy previous group id (error code is {})", ret);
+            }
             auto new_dist_pipeline = Client(self->m_client).makeDistributedPipelineHandle(
                 self->m_comm, self->m_ssg_group_file, self->m_provider_id,
                 self->m_name, false);
