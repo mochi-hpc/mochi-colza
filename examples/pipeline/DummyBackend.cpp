@@ -10,7 +10,7 @@ COLZA_REGISTER_BACKEND(dummy, DummyPipeline);
 
 void DummyPipeline::updateMonaAddresses(
         mona_instance_t mona,
-        const std::vector<na_addr_t>& addresses) {
+        const std::vector<mona_addr_t>& addresses) {
     spdlog::trace("Mona addresses have been updated, group size is now {}", addresses.size());
     (void)addresses;
     (void)mona;

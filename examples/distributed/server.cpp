@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
     mona_instance_t mona = mona_init_thread(g_address.c_str(), true, &hii.na_init_info, true);
 
     // Print MoNA address for information
-    na_addr_t mona_addr;
+    mona_addr_t mona_addr;
     mona_addr_self(mona, &mona_addr);
     std::vector<char> mona_addr_buf(256);
     size_t mona_addr_size = 256;

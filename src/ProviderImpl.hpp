@@ -73,7 +73,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
     tl::condition_variable m_mona_cv;
     mona_instance_t        m_mona;
     std::string            m_mona_self_addr;
-    std::map<ssg_member_id_t, na_addr_t> m_mona_addresses;
+    std::map<ssg_member_id_t, mona_addr_t> m_mona_addresses;
     // Admin RPC
     tl::remote_procedure m_create_pipeline;
     tl::remote_procedure m_destroy_pipeline;
@@ -130,7 +130,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
         spdlog::trace("[colza:{}] Group hash computed: {}", id(), m_group_hash);
         {
             std::lock_guard<tl::mutex> lock(m_mona_mtx);
-            na_addr_t my_mona_addr;
+            mona_addr_t my_mona_addr;
             na_return_t ret = mona_addr_self(m_mona, &my_mona_addr);
             if(ret != NA_SUCCESS)
                 throw Exception(ErrorCode::MONA_ERROR,
@@ -253,7 +253,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
                 "Unknown pipeline type "s + type);
         }
 
-        std::vector<na_addr_t> addresses;
+        std::vector<mona_addr_t> addresses;
         {
             std::lock_guard<tl::mutex> lock(m_mona_mtx);
             addresses.reserve(m_mona_addresses.size());
@@ -582,7 +582,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
         req.respond(result);
     }
 
-    na_addr_t _requestMonaAddressFromSSGMember(ssg_member_id_t member_id) {
+    mona_addr_t _requestMonaAddressFromSSGMember(ssg_member_id_t member_id) {
         hg_addr_t hg_addr = HG_ADDR_NULL;
         ssg_get_group_member_addr(m_gid, member_id, &hg_addr);
         tl::provider_handle ph;
@@ -606,7 +606,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
                 tl::thread::sleep(get_engine(), 100);
             }
         }
-        na_addr_t addr = NA_ADDR_NULL;
+        mona_addr_t addr = MONA_ADDR_NULL;
         na_return_t ret = mona_addr_lookup(m_mona, result.value().c_str(), &addr);
         if(ret != NA_SUCCESS)
             throw Exception(ErrorCode::MONA_ERROR,
@@ -651,7 +651,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
             if(m_mona_addresses.count(member_id) != 0)
                 continue;
             if(member_id == self_id) {
-                na_addr_t self_mona_addr;
+                mona_addr_t self_mona_addr;
                 mona_addr_self(m_mona, &self_mona_addr);
                 tmp_addresses[member_id] = self_mona_addr;
             } else {
@@ -676,7 +676,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
 
         if(update_type == SSG_MEMBER_JOINED) {
             spdlog::trace("[colza:{}] Member {} joined", id(), member_id);
-            na_addr_t na_addr = _requestMonaAddressFromSSGMember(member_id);
+            mona_addr_t na_addr = _requestMonaAddressFromSSGMember(member_id);
             {
                 std::lock_guard<tl::mutex> lock(m_mona_mtx);
                 m_mona_addresses[member_id] = na_addr;
@@ -689,7 +689,7 @@ class ProviderImpl : public tl::provider<ProviderImpl> {
                 m_mona_addresses.erase(member_id);
             }
         }
-        std::vector<na_addr_t> addresses;
+        std::vector<mona_addr_t> addresses;
         {
             std::lock_guard<tl::mutex> lock(m_mona_mtx);
             addresses.reserve(m_mona_addresses.size());

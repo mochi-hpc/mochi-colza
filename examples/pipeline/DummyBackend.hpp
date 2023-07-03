@@ -91,7 +91,7 @@ class DummyPipeline : public colza::Backend {
      */
     void updateMonaAddresses(
             mona_instance_t mona,
-            const std::vector<na_addr_t>& addresses) override;
+            const std::vector<mona_addr_t>& addresses) override;
 
     /**
      * @brief Tells the pipeline that the given iteration is starting.

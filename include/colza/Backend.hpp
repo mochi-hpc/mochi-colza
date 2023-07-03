@@ -79,7 +79,7 @@ class Backend {
      */
     virtual void updateMonaAddresses(
         mona_instance_t mona,
-        const std::vector<na_addr_t>& addresses) = 0;
+        const std::vector<mona_addr_t>& addresses) = 0;
 
     /**
      * @brief Tells the pipeline that the given iteration is starting.
