@@ -2,8 +2,10 @@ name: Build the main version using Spack
 
 on:
   workflow_dispatch: {}
-  schedule:
-  - cron: "0 0 * * *"
+#  schedule:
+#  - cron: "0 0 * * *"
+
+   # NOTE Schedule is disabled as this package is deprecated
 
 jobs:
   build:
